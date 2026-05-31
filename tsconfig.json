@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      // Type-only mapping to the local Nasti checkout so we can type-check the
+      // plugin without installing the full Nasti runtime. At runtime Nasti is a
+      // peerDependency (see package.json) and these `import type`s are erased.
+      "@nasti-toolchain/nasti": ["../Nasti/dist/index.d.ts"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["dist", "node_modules", "examples"]
+}
