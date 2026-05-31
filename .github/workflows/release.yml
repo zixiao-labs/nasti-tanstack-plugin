@@ -9,6 +9,9 @@ jobs:
   release:
     runs-on: ubuntu-latest
     environment: production
+    permissions:
+      contents: read
+      id-token: write # 需要此权限以使用 OIDC 认证
     steps:
       - uses: actions/checkout@v4
 
