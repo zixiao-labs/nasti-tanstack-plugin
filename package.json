@@ -1,6 +1,6 @@
 {
   "name": "@nasti-toolchain/plugin-tanstack",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "TanStack Router support for Nasti — file-based route tree generation + build-time automatic code splitting",
   "keywords": [
     "Nasti",
