@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    runs-on: ubuntu-
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "Error: dist/ directory not found after build"
+            exit 1
+          fi
+          if [ ! -f "dist/index.js" ] && [ ! -f "dist/index.cjs" ]; then
+            echo "Error: expected build artifacts not found in dist/"
+            exit 1
+          fi
+          echo "Build artifacts verified:"
+          ls -lh dist/
+
+      - name: Publish with provenance
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ""
+        # 使用 OIDC Trusted Publisher 认证，不需要 NPM_TOKEN
+        #
+        # === 首次配置步骤 ===
+        # 1. npmjs.com → 登录 → 包页面 → Settings → Trusted Publishers → 添加：
+        #    - Repository owner: zixiao-labs
+        #    - Repository name: Nasti
+        #    - Workflow filename: publish.yml
+        #    - Environment name: npm-publish
+        # 2. GitHub repo → Settings → Environments → 新建 "npm-publish"
+        #    （可在此环境中配置 Required reviewers 或 Deployment branches 限制）
+        #
+        # 注意：Trusted Publisher 使用 OIDC token 替代 NPM_TOKEN，
+        # 两者是互斥的认证方式，不应同时使用。
+        # --provenance 标志要求 id-token: write 权限，会在 npm 包页面显示来源验证信息。
